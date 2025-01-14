@@ -23,21 +23,23 @@ public class CanonRotation : MonoBehaviour
     {
         //PISTA: mireu TOTES les variables i feu-les servir
 
-        /*var mousePos = //guardem posició del ratolí a la càmera
-        var direction = //vector entre el click i la bala
-        var angle = (Mathf.Atan2(dist.y, dist.x) * 180f / Mathf.PI + offset);
-        transform.rotation = Quaternion.Euler( //aplicar rotació de l'angle al canó  */
-
+        var mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        var direction = mousePos - ShootPoint.transform.localPosition;
+        transform.position =Vector2.Lerp(transform.position, mousePos, offset);
+        var angle = (Mathf.Atan2(direction.y, direction.x) * 180f / Mathf.PI + offset);
+        transform.rotation = Quaternion.Euler(0,0,angle);
         if (Input.GetMouseButton(0))
         {
-            //ProjectileSpeed += //cada segon s'ha de fer 4 unitats més gran
+            if(ProjectileSpeed<MaxSpeed){
+                ProjectileSpeed += Time.deltaTime * 4f;
+            } 
             
         }
         if(Input.GetMouseButtonUp(0))
         {
-            //var projectile = Instantiate(Bullet, //On s'instancia?
-            //projectile.GetComponent<Rigidbody2D>().velocity = //quina velocitat ha de tenir la bala? 
-            ProjectileSpeed = 0f; //reset després del tret
+            var projectile = Instantiate(Bullet, ShootPoint.transform.position, transform.rotation);
+            projectile.GetComponent<Rigidbody2D>().velocity = direction * ProjectileSpeed; 
+            ProjectileSpeed = 0f; //reset desprï¿½s del tret
         }
         CalculateBarScale();
 
